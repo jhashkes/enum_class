@@ -47,7 +47,7 @@ ENUM_CLASS(Animal, int,
   Alternative method using automatically generated meta class:
 
   ```cpp
-  auto animal = AnimalMeta::Value("HORSE");				// no need for <Animal> template
+  auto animal = AnimalMeta::Value("HORSE");			// no need for <Animal> template
   if (animal) {
     // *animal == Animal::HORSE
   }
