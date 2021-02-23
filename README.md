@@ -22,7 +22,7 @@ ENUM_CLASS(Animal, int,
   Access enum class metadata using enum_class namespace functions:
 
   ```cpp
-  auto animal_str = enum_class::Name<Animal>(Animal::DOG);
+  auto animal_str = enum_class::Name(Animal::DOG);		// no need for <Animal>
   // animal_str == "DOG"
   ```
   
@@ -35,8 +35,19 @@ ENUM_CLASS(Animal, int,
 
 * String to enum value
 
+  Access enum class metadata using enum_class namespace functions:
+
   ```cpp
-  auto animal = enum_class::Value<Animal>("HORSE");
+  auto animal = enum_class::Value<Animal>("HORSE");		// need to specify <Animal>
+  if (animal) {
+    // *animal == Animal::HORSE
+  }
+  ```
+
+  Alternative method using automatically generated meta class:
+
+  ```cpp
+  auto animal = AnimalMeta::Value("HORSE");				// no need for <Animal> template
   if (animal) {
     // *animal == Animal::HORSE
   }
