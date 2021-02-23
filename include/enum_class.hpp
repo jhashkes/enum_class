@@ -31,16 +31,14 @@
 
 namespace enum_class
 {
-	using EnumName = std::string;
+	template<typename EnumValue>
+	using NameValueVec = std::vector<std::pair<std::string, EnumValue>>;
 
 	template<typename EnumValue>
-	using NameValueVec = std::vector<std::pair<EnumName, EnumValue>>;
+	using ValueToNameMap = std::unordered_map<EnumValue, std::string>;
 
 	template<typename EnumValue>
-	using ValueToNameMap = std::unordered_map<EnumValue, EnumName>;
-
-	template<typename EnumValue>
-	using NameToValueMap = std::unordered_map<EnumName, EnumValue>;
+	using NameToValueMap = std::unordered_map<std::string, EnumValue>;
 
 	template<typename EnumValue>
 	class EnumInfo
@@ -75,7 +73,7 @@ namespace enum_class
 		}
 
 	public:
-		static inline EnumName Name(EnumValue value)
+		static inline std::string Name(EnumValue value)
 		{
 			const auto& value_to_name_map = EnumInfo<EnumValue>::value_to_name_map_;
 			auto it = value_to_name_map.find(value);
@@ -84,7 +82,7 @@ namespace enum_class
 			return it->second;
 		}
 
-		static inline std::optional<EnumValue> Value(EnumName name)
+		static inline std::optional<EnumValue> Value(std::string name)
 		{
 			const auto& name_to_value_map = EnumInfo<EnumValue>::name_to_value_map_;
 			auto it = name_to_value_map.find(name);
@@ -93,10 +91,10 @@ namespace enum_class
 			return it->second;
 		}
 
-		static inline std::vector<EnumName> Names()
+		static inline std::vector<std::string> Names()
 		{
 			const auto& name_value_vec = EnumInfo<EnumValue>::name_value_vec_;
-			std::vector<EnumName> values;
+			std::vector<std::string> values;
 			values.reserve(name_value_vec.size());
 			for (const auto& [name, value] : name_value_vec)
 				values.emplace_back(name);
@@ -120,27 +118,27 @@ namespace enum_class
 	};
 
 	template<typename EnumValue>
-	static inline EnumName Name(EnumValue value)
+	static inline std::string Name(EnumValue value)
 	{
 		return EnumInfo<EnumValue>::Name(value);
 	}
 
 	template<typename EnumValue>
-	static inline std::optional<EnumValue> Value(EnumName name)
+	static inline std::optional<EnumValue> Value(std::string name)
 	{
 		return EnumInfo<EnumValue>::Value(name);
 	}
 
 	template<typename EnumValue>
-	static inline std::vector<EnumName> Names()
+	static inline std::vector<std::string> Names()
 	{
-		return EnumInfo<EnumValue>::Names(value);
+		return EnumInfo<EnumValue>::Names();
 	}
 
 	template<typename EnumValue>
 	static inline std::vector<EnumValue> Values()
 	{
-		return EnumInfo<EnumValue>::Values(name);
+		return EnumInfo<EnumValue>::Values();
 	}
 }
 

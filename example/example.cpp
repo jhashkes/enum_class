@@ -27,7 +27,7 @@
 
 // Output enum name and value
 template<typename ENUM_VALUE>
-void print_enum(enum_class::EnumName name, std::optional<ENUM_VALUE> optional_value)
+void print_enum(std::string name, std::optional<ENUM_VALUE> optional_value)
 {
     if (optional_value)
         std::cout << name << " = " << static_cast<int>(*optional_value) << std::endl;
@@ -51,53 +51,101 @@ struct OuterClass
 // Demonstrate the various functions
 int main()
 {
-    // Output: DOG = -6
+    /*****************************************************
+     * Using enum_class namespace
+     *****************************************************/
+    std::cout << "Using enum_class namespace:" << std::endl << std::endl;
+
     {
         Animal animal{ Animal::DOG };
-        auto animal_name = enum_class::Name<Animal>(animal);            // access using enum_class namespace
+        auto animal_name = enum_class::Name(animal);                    
         print_enum(animal_name, std::optional(animal));
-    }
+    } // Output: DOG = -6
 
-    // Output: HORSE = 7
     {
         std::string animal_name{ "HORSE" };
-        auto optional_animal = AnimalMeta::Value(animal_name);          // access using automatically generated meta class
+        auto optional_animal = enum_class::Value<Animal>(animal_name);
         print_enum(animal_name, optional_animal);
-    }
+    } // Output: HORSE = 7
 
-    // Output: CAMEL = Not Found
     {
         std::string animal_name{ "CAMEL" };
-        auto optional_animal = enum_class::Value<Animal>(animal_name);  // access using enum_class namespace
+        auto optional_animal = enum_class::Value<Animal>(animal_name);
         print_enum(animal_name, optional_animal);
-    }
+    } // Output: CAMEL = Not Found
     std::cout << std::endl;
 
-    // Output: Animal Count = 3, CAT = -5, DOG = -4, HORSE = 7
+    {
+        auto animals = enum_class::Values<Animal>();
+        std::cout << "Animal Count = " << animals.size() << std::endl;
+        for (auto animal : animals)
+            print_enum(enum_class::Name(animal), std::optional(animal));
+    } // Output: Animal Count = 3, CAT = -5, DOG = -4, HORSE = 7
+    std::cout << std::endl;
+
+    {
+        auto animal_names = enum_class::Names<Animal>();
+        std::cout << "Animal Count = " << animal_names.size() << std::endl;
+        for (const auto& animal_name : animal_names)
+            print_enum(animal_name, enum_class::Value<Animal>(animal_name));
+    } // Output: Animal Count = 3, CAT = -5, DOG = -4, HORSE = 7
+    std::cout << std::endl;
+
+    {
+        auto car_names = enum_class::Names<OuterClass::Car>();
+        std::cout << "Car Count = " << car_names.size() << std::endl;
+        for (const auto& car_name : car_names)
+            print_enum(car_name, enum_class::Value<OuterClass::Car>(car_name));
+    } // Output: Car Count = 4, BMW = -1, CHEVY = 0, NISSAN = 6, MAZDA = 7
+    std::cout << std::endl;
+
+    /*****************************************************
+     * Using automatically generated meta class
+     *****************************************************/
+    std::cout << "Using automatically generated meta class:" << std::endl << std::endl;
+
+    {
+        Animal animal{ Animal::DOG };
+        auto animal_name = AnimalMeta::Name(animal);                    
+        print_enum(animal_name, std::optional(animal));
+    } // Output: DOG = -6
+
+    {
+        std::string animal_name{ "HORSE" };
+        auto optional_animal = AnimalMeta::Value(animal_name);
+        print_enum(animal_name, optional_animal);
+    } // Output: HORSE = 7
+
+    {
+        std::string animal_name{ "CAMEL" };
+        auto optional_animal = AnimalMeta::Value(animal_name);
+        print_enum(animal_name, optional_animal);
+    } // Output: CAMEL = Not Found
+    std::cout << std::endl;
+
     {
         auto animals = AnimalMeta::Values();
         std::cout << "Animal Count = " << animals.size() << std::endl;
         for (auto animal : animals)
             print_enum(AnimalMeta::Name(animal), std::optional(animal));
-    }
+    } // Output: Animal Count = 3, CAT = -5, DOG = -4, HORSE = 7
     std::cout << std::endl;
 
-    // Output: Animal Count = 3, CAT = -5, DOG = -4, HORSE = 7
     {
         auto animal_names = AnimalMeta::Names();
         std::cout << "Animal Count = " << animal_names.size() << std::endl;
         for (const auto& animal_name : animal_names)
             print_enum(animal_name, AnimalMeta::Value(animal_name));
-    }
+    } // Output: Animal Count = 3, CAT = -5, DOG = -4, HORSE = 7
     std::cout << std::endl;
 
-    // Output: Car Count = 4, BMW = -1, CHEVY = 0, NISSAN = 6, MAZDA = 7
     {
         auto car_names = OuterClass::CarMeta::Names();
         std::cout << "Car Count = " << car_names.size() << std::endl;
         for (const auto& car_name : car_names)
             print_enum(car_name, OuterClass::CarMeta::Value(car_name));
-    }
+    } // Output: Car Count = 4, BMW = -1, CHEVY = 0, NISSAN = 6, MAZDA = 7
+    std::cout << std::endl;
 
     return 0;
 }
